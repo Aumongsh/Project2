@@ -26,7 +26,7 @@ void getWall()
 {
 	if (index > 18)
 	{
-		bool isWall = 1; //wall is 1, and empty is 0 
+		bool isWall = 1; // STOP USING NUMBERS TO INDICATE TRUE OR FALSE
 	}
 }
 
