@@ -42,8 +42,6 @@ bool isValid( int rows, int cols)
 {
 	if (rows >= 0 && rows < ROWS && cols >= 0 && cols < COLS);
 	return false;
-
-	 
 }
 
 int bfs_search(Cell start, Cell end)
