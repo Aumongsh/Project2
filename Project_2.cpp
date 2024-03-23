@@ -26,7 +26,7 @@ void getWall()
 {
 	if (index > 18)
 	{
-		bool isWall = 1; //wall is 1, and empty is 0 
+		bool isWall = 1; // STOP USING NUMBERS TO INDICATE TRUE OR FALSE
 	}
 }
 
@@ -42,8 +42,6 @@ bool isValid( int rows, int cols)
 {
 	if (rows >= 0 && rows < ROWS && cols >= 0 && cols < COLS);
 	return false;
-
-	 
 }
 
 int bfs_search(Cell start, Cell end)
