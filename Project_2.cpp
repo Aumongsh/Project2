@@ -4,29 +4,28 @@
 
 using namespace std;
 
-const int ROWS = 5;
-const int COLS = 5;
+const int SIZE = 5;
 
-int index;
+enum CellType {
+	START, EMPTY, WALL, END
+};
 
-int maze[ROWS][COLS] = { index };
-
-void fillArray(int array[ROWS][COLS])
+void fillArray(vector<vector<CellType>>& grid, int threshold_wall)
 {
-	for (int i = 0; i < ROWS; i++)
+	for (int i = 0; i < SIZE; i++)
 	{
-		for (int j = 0; j < COLS; j++)
+		for (int j = 0; j < SIZE; j++)
 		{
-			maze[i][j] = (rand() % 18);  //random # 0 - ?
+			int randomnum = rand() % 100; //assign ramdom number 0-100. If the number is greater than 50 then it becomes a wall cell.
+			if (randomnum > threshold_wall)
+			{
+				grid[i][j] = WALL; //set as wall
+			}
+			else
+			{
+				grid[i][j] = EMPTY; //set as empty
+			}
 		}
-	}
-}
-
-void getWall()
-{
-	if (index > 18)
-	{
-		bool isWall = 1; //wall is 1, and empty is 0 
 	}
 }
 
@@ -34,47 +33,43 @@ void getWall()
 int adjacentRows[] = { -1, 0 , 1, 0 };
 int adjacentColumns[] = { 0, 1, 0, -1 };
 
-//create cells
-struct Cell { int row; int col; };
-
 //check a cell if it is valid to go forword
 bool isValid( int rows, int cols)
 {
-	if (rows >= 0 && rows < ROWS && cols >= 0 && cols < COLS);
-	return false;
-
-	 
+	return (rows >= 0 && rows < SIZE && cols >= 0 && cols < SIZE);	 
 }
 
-int bfs_search(Cell start, Cell end)
+int bfs_search(vector<vector<CellType>>& grid, pair<int, int> START,
+ pair<int, int> END, vector<vector<bool>>& visited)
 {
-	vector<vector<bool>> visited(ROWS, vector<bool>( COLS, false));
-	queue <pair <Cell, int>> que;
-
-	que.push({start, 0});
-	visited[start.row][start.col] = true; 
+	queue <pair <int, int>> que;
+	que.push(START);
+	visited[START.first][START.second] = true;
+	vector<vector<int>> distance(SIZE, vector<int>(SIZE, -1));
+	distance[START.first][START.second] = 0;
 
 	while (!que.empty())
 	{
-		Cell current = que.front().first;
-		int distances = que.front().second;
+		pair<int, int> current = que.front();
 		que.pop();
 
 		for (int i = 0; i < 4; i++)
 		{
-			int newRow = current.row + adjacentRows[i];
-			int newCol = current.col + adjacentColumns[i];
+			int newRow = current.first + adjacentRows[i];
+			int newCol = current.second + adjacentColumns[i];
 
-			if (isValid(newRow, newCol) && !visited[newRow][newCol])
+			if (isValid(newRow, newCol) && !visited[newRow][newCol]
+			&& grid[newRow][newCol] != WALL)
 			{
-				que.push({{newRow, newCol}, distances + 1});
 				visited[newRow][newCol] = true;
+				que.push({newRow, newCol});
+				distance[newRow][newCol] = distance[current.first][current.second] + 1; 
 			}
 		}
 
-		if (current.row == end.row && current.col == end.col)
+		if (current == END)
 		{
-			return distances;
+			return distance[current.first][current.second];
 		}
 	}
 
@@ -83,10 +78,15 @@ int bfs_search(Cell start, Cell end)
 
 int main()
 {
-	Cell start_position{0, 0};
-	Cell end_position{ROWS - 1, COLS - 1};
+	vector<vector<CellType>> grid(SIZE, vector<CellType>(SIZE, EMPTY));
+	vector<vector<bool>> visited(SIZE, vector<bool>(SIZE, false)); 
 
-	int shortest_distances = bfs_search(start_position, end_position);
+	fillArray(grid, 90);
+
+	pair<int, int> START = { 0, 0 };
+	pair<int, int> END = { SIZE - 1, SIZE - 1 };
+
+	int shortest_distances = bfs_search(grid, START, END, visited);
 
 	if (shortest_distances == true)
 	{
